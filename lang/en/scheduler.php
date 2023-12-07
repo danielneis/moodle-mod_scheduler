@@ -155,7 +155,7 @@ $string['chooseexisting'] = 'Choose existing';
 $string['choosingslotstart'] = 'Choosing the start time';
 $string['comments'] = 'Comments';
 $string['conflictlocal'] = '{$a->datetime} ({$a->duration} minutes) in this scheduler';
-$string['conflictremote'] = '{$a->datetime} ({$a->duration} minutes) in course {$a->courseshortname}, scheduler {$a->schedulername}';
+$string['conflictremote'] = '{$a->datetime} ({$a->duration} minutes) in course {$a->courseshortname}, scheduler <a href="{$a->schedulerurl}">{$a->schedulername}</a>';
 $string['contentformat'] = 'Format';
 $string['contentformat_help'] = '<p>There are three basic choices for the export format,
      differing in how slots with several appointments are handled.
@@ -329,6 +329,7 @@ $string['missingstudentsmany'] = '{$a} students still need to make an appointmen
 $string['mode'] = 'Mode';
 $string['modeintro'] = 'Students can register';
 $string['modeappointments'] = 'appointment(s)';
+$string['modeonereally'] = 'in any scheduler in any course';
 $string['modeoneonly'] = 'in this scheduler';
 $string['modeoneatatime'] = 'at a time';
 $string['monday'] = 'Monday';

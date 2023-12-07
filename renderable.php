@@ -258,7 +258,7 @@ class scheduler_slot_booker implements renderable {
      * @param string $groupinfo information about group slots
      * @param array $otherstudents other students in this slot
      */
-    public function add_slot(slot $slotmodel, $canbook, $bookedbyme, $groupinfo, $otherstudents) {
+    public function add_slot(slot $slotmodel, $canbook, $bookedbyme, $groupinfo, $otherstudents, $conflicts = []) {
         $slot = new stdClass();
         $slot->slotid = $slotmodel->id;
         $slot->starttime = $slotmodel->starttime;
@@ -271,6 +271,7 @@ class scheduler_slot_booker implements renderable {
         $slot->groupinfo = $groupinfo;
         $slot->teacher = $slotmodel->get_teacher();
         $slot->otherstudents = $otherstudents;
+        $slot->conflicts = $conflicts;
 
         $this->slots[] = $slot;
     }

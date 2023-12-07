@@ -91,6 +91,18 @@ function scheduler_book_slot($scheduler, $slotid, $userid, $groupid, $mform, $fo
                 $errormessage = get_string('slot_is_just_in_use', 'scheduler');
             }
         }
+
+        if ($scheduler->schedulermode == 'onereally') {
+            $conflicts = $scheduler->get_conflicts($slot->starttime, $slot->starttime + $slot->duration * 60,
+                    0, $userid, SCHEDULER_ALL);
+            if ($conflicts) {
+                $errormessage = '';
+                $cl = new scheduler_conflict_list();
+                $cl->add_conflicts($conflicts);
+                $errormessage .= get_string('conflictingslots', 'scheduler', userdate($slot->starttime));
+                $errormessage .= $output->render($cl);
+            }
+        }
     }
 
     if ($errormessage) {

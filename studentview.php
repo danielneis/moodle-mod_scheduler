@@ -186,9 +186,20 @@ if (!$canseefull && $bookablecnt == 0) {
         $end = $total;
     }
 
+    $filterconflicts = $scheduler->schedulermode == 'onereally';
+
     for ($idx = $start; $idx < $end; $idx++) {
         $slot = $bookableslots[$idx];
         $canbookthisslot = $canbook && ($bookablecnt != 0);
+
+        $conflicts = [];
+        if ($filterconflicts) {
+            $conflicts = $scheduler->get_conflicts($slot->starttime, $slot->starttime + $slot->duration * 60,
+                    0, $USER->id, SCHEDULER_ALL);
+            if ($conflicts) {
+                $canbookthisslot = false;
+            }
+        }
 
         if (has_capability('mod/scheduler:seeotherstudentsbooking', $context)) {
             $others = new scheduler_student_list($scheduler, false);
@@ -216,7 +227,7 @@ if (!$canseefull && $bookablecnt == 0) {
             }
         }
 
-        $booker->add_slot($slot, $canbookthisslot, false, $groupinfo, $others);
+        $booker->add_slot($slot, $canbookthisslot, false, $groupinfo, $others, $conflicts);
     }
 
 

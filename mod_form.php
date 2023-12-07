@@ -84,6 +84,7 @@ class mod_scheduler_mod_form extends moodleform_mod {
 
         $modeoptions['oneonly'] = get_string('modeoneonly', 'scheduler');
         $modeoptions['onetime'] = get_string('modeoneatatime', 'scheduler');
+        $modeoptions['onereally'] = get_string('modeonereally', 'scheduler');
         $modegroup[] = $mform->createElement('select', 'schedulermode', '', $modeoptions);
         $mform->setDefault('schedulermode', 'oneonly');
 

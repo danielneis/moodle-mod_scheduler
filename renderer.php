@@ -664,6 +664,13 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 $bookurl = new moodle_url($booker->actionurl, array('what' => $bookaction, 'slotid' => $slot->slotid));
                 $button = new single_button($bookurl, get_string('bookslot', 'scheduler'));
                 $rowdata[] = $this->render($button);
+            } else if ($slot->conflicts) {
+                    $conflictmsg = '';
+                    $cl = new scheduler_conflict_list();
+                    $cl->add_conflicts($slot->conflicts);
+                    $conflictmsg .= get_string('conflictingslots', 'scheduler', userdate($slot->starttime));
+                    $conflictmsg .= $this->render($cl);
+                    $rowdata[] = $conflictmsg;
             } else {
                 $rowdata[] = '';
             }
@@ -938,6 +945,8 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 $a->courseshortname = $conflict->courseshortname;
                 $a->coursefullname = $conflict->coursefullname;
                 $a->schedulername = format_string($conflict->schedulername);
+                $cm = get_coursemodule_from_instance('scheduler', $conflict->schedulerid);
+                $a->schedulerurl = (new moodle_url('/mod/scheduler/view.php', ['id' => $cm->id]))->out(false);
                 $entry = get_string('conflictremote', 'scheduler', $a);
             }
             $o .= html_writer::tag('li', $entry);
