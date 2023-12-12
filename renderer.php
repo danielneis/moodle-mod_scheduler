@@ -536,6 +536,14 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 $o .= html_writer::start_tag('form', array('action' => $studentlist->actionurl,
                                 'method' => 'post', 'class' => 'studentselectform'));
             }
+            $params = [
+                'itemtype' => 'mod',
+                'itemmodule' => 'scheduler',
+                'iteminstance' => $studentlist->scheduler->id,
+                'courseid' => $studentlist->scheduler->courseid,
+                'itemnumber' => 0
+            ];
+            $gradeitem = \grade_item::fetch($params);
 
             foreach ($studentlist->students as $student) {
                 $class = 'otherstudent';
@@ -577,7 +585,13 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 if ($studentlist->showgrades && $student->grade) {
                     $grade = $this->format_grade($studentlist->scheduler, $student->grade, true);
                 }
-                $o .= html_writer::div($checkbox . $picture . ' ' . $name . $studicons . ' ' . $grade, $class);
+                if ($student->checked && $student->grade >= $gradeitem->gradepass) {
+                   $approved = get_string('approved', 'scheduler');
+                } else {
+                   $approved = get_string('notapproved', 'scheduler');
+                }
+                $o .= html_writer::div($checkbox . $picture . ' ' . $name . $studicons . ' ' . $grade . ' ' . $approved, $class);
+
             }
 
             if ($editable) {
