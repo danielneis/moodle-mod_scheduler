@@ -199,6 +199,7 @@ function scheduler_get_export_fields(scheduler $scheduler) {
 
     $result[] = new scheduler_attended_field();
     $result[] = new scheduler_grade_field();
+    $result[] = new scheduler_approved_field();
     $result[] = new scheduler_appointmentnote_field();
     $result[] = new scheduler_teachernote_field();
     $result[] = new scheduler_studentnote_field();
@@ -1114,6 +1115,70 @@ class scheduler_grade_field extends scheduler_export_field {
         return $this->renderer->format_grade($slot->get_scheduler(), $appointment->grade);
     }
 
+}
+
+/**
+ * Export field: Approved or not for the appointment
+ *
+ * @package    mod_scheduler
+ * @copyright  2016 Henning Bostelmann and others (see README.txt)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class scheduler_approved_field extends scheduler_export_field {
+
+    /**
+     * Retrieve the unique id (a string) for this field
+     */
+    public function get_id() {
+        return 'approved';
+    }
+
+    /**
+     * Retrieve the group that this field belongs to -
+     * either 'slot' or 'student' or 'appointment',
+     *
+     * @return string the group id as above
+     */
+    public function get_group() {
+        return 'appointment';
+    }
+
+    /**
+     * is_available
+     *
+     * @param scheduler $scheduler
+     * @return bool
+     */
+    public function is_available(scheduler $scheduler) {
+        return $scheduler->uses_grades();
+    }
+
+    /**
+     * Retrieve the value of this field in a particular data record
+     *
+     * @param slot $slot the scheduler slot to get data from
+     * @param mixed $appointment the appointment to evaluate (may be null for an empty slot)
+     * @return string the value of this field for the given data
+     */
+    public function get_value(slot $slot, $appointment) {
+        if (! $appointment instanceof appointment) {
+            return '';
+        }
+        $params = [
+            'itemtype' => 'mod',
+            'itemmodule' => 'scheduler',
+            'iteminstance' => $slot->get_scheduler()->id,
+            'courseid' => $slot->get_scheduler()->courseid,
+            'itemnumber' => 0
+        ];
+        $gradeitem = \grade_item::fetch($params);
+        if ($appointment->attended && $appointment->grade >= $gradeitem->gradepass) {
+            $approved = get_string('approved', 'scheduler');
+        } else {
+            $approved = get_string('notapproved', 'scheduler');
+        }
+        return $approved;
+    }
 }
 
 /**

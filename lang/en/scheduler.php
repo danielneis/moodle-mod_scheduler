@@ -235,6 +235,7 @@ $string['exporttimerangeall'] = 'Future and past slots';
 $string['exporttimerangefuture'] = 'Only future slots';
 $string['exporttimerangepast'] = 'Only past slots';
 $string['everyone'] = 'Everyone';
+$string['field-approved'] = 'Approved';
 $string['field-date'] = 'Date';
 $string['field-starttime'] = 'Start time';
 $string['field-endtime'] = 'End time';
