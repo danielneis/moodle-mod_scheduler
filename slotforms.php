@@ -217,6 +217,33 @@ class scheduler_editslot_form extends scheduler_slotform_base {
         $mform->setDefault('starttime', time());
         $mform->addHelpButton('starttime', 'choosingslotstart', 'scheduler');
 
+
+        // Extra date/time of the slot.
+        $mform->addElement('checkbox', 'appointuseextradates', get_string('useextradates', 'scheduler'));
+        if (isset($this->_customdata['daterepeats'])) {
+            $daterepeatno = $this->_customdata['daterepeats'];
+        } else if ($this->slotid) {
+            $daterepeatno = $DB->count_records('scheduler_extradates', array('slotid' => $this->slotid));
+            $daterepeatno += 1;
+        } else {
+            $daterepeatno = 1;
+        }
+        $daterepeateloptions = array();
+        $daterepeateloptions['extradate']['type'] = PARAM_INT;
+        $daterepeateloptions['extrastarttime']['disabledif'] = array('appointuseextradates', 'eq', 0);
+        $daterepeateloptions['extrastarttime']['default'] = time();
+        $daterepeateloptions['extraduration']['type'] = PARAM_INT;
+        $daterepeateloptions['extraduration']['default'] = $this->scheduler->defaultslotduration;
+
+        $daterepeatarray = [
+            $mform->createElement('date_time_selector', 'extrastarttime', get_string('date', 'scheduler'), $timeoptions),
+            $mform->createElement('text', 'extraduration', get_string('duration', 'scheduler'), array('size' => 5)),
+            $mform->createElement('advcheckbox', 'deleteslotextradate', '', get_string('deleteextradate', 'scheduler')),
+        ];
+
+        $this->repeat_elements($daterepeatarray, $daterepeatno, $daterepeateloptions,
+                        'appointment_daterepeats', 'appointment_dateadd', 1, get_string('addslotdate', 'scheduler'));
+
         // Duration of the slot.
         $this->add_duration_field();
 
@@ -456,6 +483,18 @@ class scheduler_editslot_form extends scheduler_slotform_base {
 
         if (!$slotid) {
             $slot->save(); // Make sure that a new slot has a slot id before proceeding.
+        }
+
+        // Save extra dates
+        global $DB;
+        if ($data->appointuseextradates) {
+            foreach ($data->extrastarttime as $key => $extra) {
+                $extradate = new \stdclass();
+                $extradate->slotid = $slotid;
+                $extradate->starttime = $extra;
+                $extradate->duration = $data->extraduration[$key];
+                $DB->insert_record('scheduler_extradates', $extradate);
+            }
         }
 
         $editor = $data->notes_editor;

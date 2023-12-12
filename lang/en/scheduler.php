@@ -105,6 +105,7 @@ $string['areateachernote'] = 'Files in confidential notes';
 $string['action'] = 'Action';
 $string['actions'] = 'Actions';
 $string['addappointment'] = 'Add another student';
+$string['addslotdate'] = 'Add slot date';
 $string['addcommands'] = 'Add slots';
 $string['addondays'] = 'Add appointments on';
 $string['addsession'] = 'Add repeated slots';
@@ -204,6 +205,7 @@ $string['defaultslotduration_help'] = 'The default length (in minutes) for appoi
 $string['deleteallslots'] = 'Delete all slots';
 $string['deleteallunusedslots'] = 'Delete unused slots';
 $string['deletecommands'] = 'Delete slots';
+$string['deleteextradate'] = 'Delete this date (on form submission)';
 $string['deletemyslots'] = 'Delete all my slots';
 $string['deleteselection'] = 'Delete selected slots';
 $string['deletetheseslots'] = 'Delete these slots';
@@ -489,6 +491,7 @@ $string['usecaptcha'] = 'Use CAPTCHA for new bookings';
 $string['usecaptcha_help'] = 'If enabled, students will need to solve a CAPTCHA security question before making a new booking.
 Use this setting if you suspect that students use automated programs to snap up available slots.
 <p>No captcha will be displayed if the student edits an existing booking.</p>';
+$string['useextradates'] = 'Use more dates';
 $string['usenotes'] = 'Use notes for appointments';
 $string['usenotesnone'] = 'none';
 $string['usenotesstudent'] = 'Appointment note, visible to teacher and student';

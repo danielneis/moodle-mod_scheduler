@@ -367,5 +367,32 @@ function xmldb_scheduler_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2022120200, 'scheduler');
     }
 
+    if ($oldversion < 2023052401) {
+
+        // Define table scheduler_extradates to be created.
+        $table = new xmldb_table('scheduler_extradates');
+
+        // Adding fields to table scheduler_extradates.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('slotid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('duration', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table scheduler_extradates.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('slotid', XMLDB_KEY_FOREIGN, ['slotid'], 'scheduler_slots', ['id']);
+
+        // Adding indexes to table scheduler_extradates.
+        $table->add_index('starttime', XMLDB_INDEX_NOTUNIQUE, ['starttime']);
+
+        // Conditionally launch create table for scheduler_extradates.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Scheduler savepoint reached.
+        upgrade_mod_savepoint(true, 2023052401, 'scheduler');
+    }
+
     return true;
 }
