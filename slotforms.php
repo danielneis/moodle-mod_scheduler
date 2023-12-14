@@ -217,23 +217,21 @@ class scheduler_editslot_form extends scheduler_slotform_base {
         $mform->setDefault('starttime', time());
         $mform->addHelpButton('starttime', 'choosingslotstart', 'scheduler');
 
+        // Duration of the slot.
+        $this->add_duration_field();
 
-        // Extra date/time of the slot.
-        $mform->addElement('checkbox', 'appointuseextradates', get_string('useextradates', 'scheduler'));
+
+        // Extra dates/times of the slot.
         if (isset($this->_customdata['daterepeats'])) {
             $daterepeatno = $this->_customdata['daterepeats'];
         } else if ($this->slotid) {
             $daterepeatno = $DB->count_records('scheduler_extradates', array('slotid' => $this->slotid));
-            $daterepeatno += 1;
         } else {
-            $daterepeatno = 1;
+            $daterepeatno = 0;
         }
         $daterepeateloptions = array();
-        $daterepeateloptions['extradate']['type'] = PARAM_INT;
         $daterepeateloptions['extrastarttime']['disabledif'] = array('appointuseextradates', 'eq', 0);
-        $daterepeateloptions['extrastarttime']['default'] = time();
         $daterepeateloptions['extraduration']['type'] = PARAM_INT;
-        $daterepeateloptions['extraduration']['default'] = $this->scheduler->defaultslotduration;
 
         $daterepeatarray = [
             $mform->createElement('date_time_selector', 'extrastarttime', get_string('date', 'scheduler'), $timeoptions),
@@ -243,9 +241,6 @@ class scheduler_editslot_form extends scheduler_slotform_base {
 
         $this->repeat_elements($daterepeatarray, $daterepeatno, $daterepeateloptions,
                         'appointment_daterepeats', 'appointment_dateadd', 1, get_string('addslotdate', 'scheduler'));
-
-        // Duration of the slot.
-        $this->add_duration_field();
 
         // Ignore conflict checkbox.
         $mform->addElement('checkbox', 'ignoreconflicts', get_string('ignoreconflicts', 'scheduler'));
@@ -452,6 +447,15 @@ class scheduler_editslot_form extends scheduler_slotform_base {
             $i++;
         }
 
+        global $DB;
+        $extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->id]);
+        $data->extrastarttime = [];
+        $data->extraduration = [];
+        foreach ($extradates as $e) {
+            $data->extrastarttime[] = $e->starttime;
+            $data->extraduration[] = $e->duration;
+        }
+
         return $data;
     }
 
@@ -487,10 +491,11 @@ class scheduler_editslot_form extends scheduler_slotform_base {
 
         // Save extra dates
         global $DB;
-        if ($data->appointuseextradates) {
+        if (isset($data->extrastarttime)) {
+            $DB->delete_records('scheduler_extradates', ['slotid' => $slot->id]);
             foreach ($data->extrastarttime as $key => $extra) {
                 $extradate = new \stdclass();
-                $extradate->slotid = $slotid;
+                $extradate->slotid = $slot->id;
                 $extradate->starttime = $extra;
                 $extradate->duration = $data->extraduration[$key];
                 $DB->insert_record('scheduler_extradates', $extradate);

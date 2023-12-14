@@ -188,8 +188,8 @@ if ($action == 'updateslot') {
 
     $mform = new scheduler_editslot_form($actionurl, $scheduler, $cm, $groupsicansee, array(
             'slotid' => $slotid,
-            'timeoptions' => $timeoptions)
-        );
+            'timeoptions' => $timeoptions,
+    ));
     $data = $mform->prepare_formdata($slot);
     $mform->set_data($data);
 
