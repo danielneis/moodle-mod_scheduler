@@ -220,7 +220,6 @@ class scheduler_editslot_form extends scheduler_slotform_base {
         // Duration of the slot.
         $this->add_duration_field();
 
-
         // Extra dates/times of the slot.
         if (isset($this->_customdata['daterepeats'])) {
             $daterepeatno = $this->_customdata['daterepeats'];
@@ -230,12 +229,18 @@ class scheduler_editslot_form extends scheduler_slotform_base {
             $daterepeatno = 0;
         }
         $daterepeateloptions = array();
-        $daterepeateloptions['extrastarttime']['disabledif'] = array('appointuseextradates', 'eq', 0);
         $daterepeateloptions['extraduration']['type'] = PARAM_INT;
+        //$daterepeateloptions['extraduration']['default'] = $this->scheduler->defaultslotduration;
+
+        $durationgroup = [];
+        $durationgroup[] =& $mform->createElement('text', 'extraduration', get_string('duration', 'scheduler'), ['size' => 5]);
+        $durationgroup[] =& $mform->createElement('static', 'extradurationmintext', '', get_string('minutes', 'scheduler'));
+
+        $group =& $mform->createElement('group', 'groupextraduration', '', $durationgroup, '', '');
 
         $daterepeatarray = [
             $mform->createElement('date_time_selector', 'extrastarttime', get_string('date', 'scheduler'), $timeoptions),
-            $mform->createElement('text', 'extraduration', get_string('duration', 'scheduler'), array('size' => 5)),
+            $group,
             $mform->createElement('advcheckbox', 'deleteslotextradate', '', get_string('deleteextradate', 'scheduler')),
         ];
 
@@ -494,6 +499,9 @@ class scheduler_editslot_form extends scheduler_slotform_base {
         if (isset($data->extrastarttime)) {
             $DB->delete_records('scheduler_extradates', ['slotid' => $slot->id]);
             foreach ($data->extrastarttime as $key => $extra) {
+                if ($data->deleteslotextradate[$key]) {
+                    continue;
+                }
                 $extradate = new \stdclass();
                 $extradate->slotid = $slot->id;
                 $extradate->starttime = $extra;
