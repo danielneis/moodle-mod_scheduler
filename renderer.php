@@ -631,6 +631,7 @@ class mod_scheduler_renderer extends plugin_renderer_base {
         $canappoint = false;
 
         foreach ($booker->slots as $slot) {
+            global $DB;
 
             $rowdata = array();
 
@@ -653,6 +654,13 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 $startdatestr = $startdate;
                 $starttimestr = $starttime;
                 $endtimestr = $endtime;
+            }
+            if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->slotid], 'starttime')) {
+                foreach ($extradates as $ed) {
+                    $startdatestr .= '<br/>' . $this->userdate($ed->starttime);
+                    $starttimestr .= '<br/>' . $this->usertime($ed->starttime);
+                    $endtimestr .= '<br/>' . $this->usertime($ed->starttime + ($ed->duration * 60));
+                }
             }
 
             $rowdata[] = $startdatestr;
@@ -779,12 +787,12 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 $startdatestr = $startdate;
                 $starttimestr = $starttime;
                 $endtimestr = $endtime;
-                if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->slotid], 'starttime')) {
-                    foreach ($extradates as $ed) {
-                        $startdatestr .= '<br/>' . $this->userdate($ed->starttime);
-                        $starttimestr .= '<br/>' . $this->usertime($ed->starttime);
-                        $endtimestr .= '<br/>' . $this->usertime($ed->starttime + ($ed->duration * 60));
-                    }
+            }
+            if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->slotid], 'starttime')) {
+                foreach ($extradates as $ed) {
+                    $startdatestr .= '<br/>' . $this->userdate($ed->starttime);
+                    $starttimestr .= '<br/>' . $this->usertime($ed->starttime);
+                    $endtimestr .= '<br/>' . $this->usertime($ed->starttime + ($ed->duration * 60));
                 }
             }
 
