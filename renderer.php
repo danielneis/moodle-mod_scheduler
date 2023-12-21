@@ -728,6 +728,7 @@ class mod_scheduler_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_scheduler_slot_manager(scheduler_slot_manager $slotman) {
+        global $DB;
 
         $this->page->requires->yui_module('moodle-mod_scheduler-saveseen',
                         'M.mod_scheduler.saveseen.init', array($slotman->scheduler->cmid) );
@@ -778,6 +779,13 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 $startdatestr = $startdate;
                 $starttimestr = $starttime;
                 $endtimestr = $endtime;
+                if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->slotid], 'starttime')) {
+                    foreach ($extradates as $ed) {
+                        $startdatestr .= '<br/>' . $this->userdate($ed->starttime);
+                        $starttimestr .= '<br/>' . $this->usertime($ed->starttime);
+                        $endtimestr .= '<br/>' . $this->usertime($ed->starttime + ($ed->duration * 60));
+                    }
+                }
             }
 
             $rowdata[] = $startdatestr;
