@@ -198,6 +198,14 @@ if (!$canseefull && $bookablecnt == 0) {
                     0, $USER->id, SCHEDULER_ALL);
             if ($conflicts) {
                 $canbookthisslot = false;
+            } else if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->id])) {
+                foreach ($extradates as $ed) {
+                    if ($conflicts = $scheduler->get_conflicts($ed->starttime, $ed->starttime + $ed->duration * 60,
+                        0, $USER->id, SCHEDULER_ALL)) {
+                        $canbookthisslot = false;
+                        break;
+                    }
+                }
             }
         }
 

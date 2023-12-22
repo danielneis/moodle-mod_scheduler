@@ -952,6 +952,7 @@ class scheduler extends mvc_record_model {
                          (sl.starttime < :endtime1 AND sl.starttime + sl.duration * 60 >= :endtime2) OR
                          (sl.starttime >= :starttime3 AND sl.starttime + sl.duration * 60 <= :endtime3) )
                        AND sl.starttime + sl.duration * 60 > :nowtime";
+
         $params['starttime1'] = $starttime;
         $params['starttime2'] = $starttime;
         $params['starttime3'] = $starttime;
