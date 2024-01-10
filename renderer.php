@@ -379,6 +379,8 @@ class mod_scheduler_renderer extends plugin_renderer_base {
      * @return string the HTML output
      */
     public function render_scheduler_slot_table(scheduler_slot_table $slottable) {
+        global $DB;
+
         $table = new html_table();
 
         if ($slottable->showslot) {
@@ -433,6 +435,15 @@ class mod_scheduler_renderer extends plugin_renderer_base {
             $starttime = $this->usertime($slot->starttime);
             $endtime   = $this->usertime($slot->endtime);
             $timedata .= html_writer::div("{$starttime} &ndash; {$endtime}", 'timelabel');
+
+            if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->slotid], 'starttime')) {
+                foreach ($extradates as $ed) {
+                    $timedata .=  html_writer::div($this->userdate($ed->starttime), 'datelabel');
+                    $starttime = $this->usertime($ed->starttime);
+                    $endtime = $this->usertime($ed->starttime + ($ed->duration * 60));
+                    $timedata .= html_writer::div("{$starttime} &ndash; {$endtime}", 'timelabel');
+                }
+            }
 
             if ($slottable->showslot) {
                 $rowdata[] = $timedata;
