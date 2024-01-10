@@ -948,17 +948,30 @@ class scheduler extends mvc_record_model {
         $studentjoin = ($student != 0) ? "JOIN {scheduler_appointment} a ON a.slotid = sl.id AND a.studentid = :studentid " : '';
         $params['studentid'] = $student;
 
-        $timeclause = "( (sl.starttime <= :starttime1 AND sl.starttime + sl.duration * 60 > :starttime2) OR
+        $timeclause = "(( (sl.starttime <= :starttime1 AND sl.starttime + sl.duration * 60 > :starttime2) OR
                          (sl.starttime < :endtime1 AND sl.starttime + sl.duration * 60 >= :endtime2) OR
                          (sl.starttime >= :starttime3 AND sl.starttime + sl.duration * 60 <= :endtime3) )
+
+                        OR
+
+                       ( (ed.starttime <= :starttime4 AND ed.starttime + ed.duration * 60 > :starttime5) OR
+                         (ed.starttime < :endtime4 AND ed.starttime + ed.duration * 60 >= :endtime5) OR
+                         (ed.starttime >= :starttime6 AND ed.starttime + ed.duration * 60 <= :endtime6) ))
+
                        AND sl.starttime + sl.duration * 60 > :nowtime";
 
         $params['starttime1'] = $starttime;
         $params['starttime2'] = $starttime;
         $params['starttime3'] = $starttime;
+        $params['starttime4'] = $starttime;
+        $params['starttime5'] = $starttime;
+        $params['starttime6'] = $starttime;
         $params['endtime1'] = $endtime;
         $params['endtime2'] = $endtime;
         $params['endtime3'] = $endtime;
+        $params['endtime4'] = $endtime;
+        $params['endtime5'] = $endtime;
+        $params['endtime6'] = $endtime;
         $params['nowtime'] = time();
 
         $sql = "SELECT sl.*,
@@ -970,6 +983,8 @@ class scheduler extends mvc_record_model {
                        $studentjoin
                   JOIN {scheduler} s ON sl.schedulerid = s.id
                   JOIN {course} c ON c.id = s.course
+             LEFT JOIN {scheduler_extradates} ed
+                    ON ed.slotid = sl.id
                  WHERE $slotscope $schedulerscope $teacherscope $timeclause
               ORDER BY sl.starttime ASC, sl.duration ASC";
 
