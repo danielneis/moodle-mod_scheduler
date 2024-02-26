@@ -254,7 +254,14 @@ class slotdate_field extends scheduler_export_field {
      * @return string the value of this field for the given data
      */
     public function get_value(slot $slot, $appointment) {
-        return mod_scheduler_renderer::userdate($slot->starttime);
+        global $DB;
+        $value = mod_scheduler_renderer::userdate($slot->starttime);
+        if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->id], 'starttime')) {
+            foreach ($extradates as $ed) {
+                $value .= "\r" . mod_scheduler_renderer::userdate($ed->starttime);
+            }
+        }
+        return $value;
     }
 }
 
@@ -292,7 +299,14 @@ class scheduler_starttime_field extends scheduler_export_field {
      * @return string the value of this field for the given data
      */
     public function get_value(slot $slot, $appointment) {
-        return mod_scheduler_renderer::usertime($slot->starttime);
+        global $DB;
+        $value = mod_scheduler_renderer::usertime($slot->starttime);
+        if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->id], 'starttime')) {
+            foreach ($extradates as $ed) {
+                $value .= "\r" . mod_scheduler_renderer::usertime($ed->starttime);
+            }
+        }
+        return $value;
     }
 
 }
@@ -332,7 +346,14 @@ class scheduler_endtime_field extends scheduler_export_field {
      * @return string the value of this field for the given data
      */
     public function get_value(slot $slot, $appointment) {
-        return mod_scheduler_renderer::usertime($slot->endtime);
+        global $DB;
+        $value = mod_scheduler_renderer::usertime($slot->endtime);
+        if ($extradates = $DB->get_records('scheduler_extradates', ['slotid' => $slot->id], 'starttime')) {
+            foreach ($extradates as $ed) {
+                $value .= "\r" . mod_scheduler_renderer::usertime($ed->starttime + ($ed->duration * 60));
+            }
+        }
+        return $value;
     }
 
 }
