@@ -1193,9 +1193,12 @@ class scheduler_approved_field extends scheduler_export_field {
             'itemnumber' => 0
         ];
         $gradeitem = \grade_item::fetch($params);
+        $approved = '';
         if ($appointment->attended && $appointment->grade >= $gradeitem->gradepass) {
             $approved = get_string('approved', 'scheduler');
-        } else {
+        } else if ((time() >= $slot->starttime) && !$appointment->attended) {
+           $approved = get_string('absent', 'scheduler');
+        } else if ((time() >= $slot->starttime) && $appointment->grade < $gradeitem->gradepass) {
             $approved = get_string('notapproved', 'scheduler');
         }
         return $approved;
