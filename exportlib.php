@@ -1196,10 +1196,12 @@ class scheduler_approved_field extends scheduler_export_field {
         $approved = '';
         if ($appointment->attended && $appointment->grade >= $gradeitem->gradepass) {
             $approved = get_string('approved', 'scheduler');
-        } else if ((time() >= $slot->starttime) && !$appointment->attended) {
-           $approved = get_string('absent', 'scheduler');
-        } else if ((time() >= $slot->starttime) && $appointment->grade < $gradeitem->gradepass) {
+        } else if ((time() >= $slot->starttime) && !empty($appointment->grade) && $appointment->grade < $gradeitem->gradepass) {
             $approved = get_string('notapproved', 'scheduler');
+        } else if ((time() >= $slot->starttime) && !$appointment->attended) {
+            $approved = get_string('absent', 'scheduler');
+        } else if (!$appointment->attended) {
+            $approved = get_string('attended', 'scheduler');
         }
         return $approved;
     }
