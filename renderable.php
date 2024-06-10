@@ -213,9 +213,10 @@ class scheduler_student_list implements renderable {
      * @param scheduler $scheduler the scheduler in whose context the list is
      * @param bool $showgrades whether tho show grades of students
      */
-    public function __construct(scheduler $scheduler, $showgrades = true) {
+    public function __construct(scheduler $scheduler, $showgrades = true, $slot = null) {
         $this->scheduler = $scheduler;
         $this->showgrades = $showgrades;
+        $this->slot = $slot;
     }
 
 }

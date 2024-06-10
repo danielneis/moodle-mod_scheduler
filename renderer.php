@@ -596,7 +596,7 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                 if ($studentlist->showgrades && $student->grade) {
                     $grade = $this->format_grade($studentlist->scheduler, $student->grade, true);
                 }
-                if ($student->checked && $student->grade >= $gradeitem->gradepass) {
+                if (($student->checked) && $student->grade >= $gradeitem->gradepass) {
                    $approved = get_string('approved', 'scheduler');
                 } else if ((time() >= $studentlist->slot->starttime) && !empty($student->grade) && $student->grade < $gradeitem->gradepass) {
                     $approved = get_string('notapproved', 'scheduler');
@@ -606,6 +606,9 @@ class mod_scheduler_renderer extends plugin_renderer_base {
                     $approved = get_string('attended', 'scheduler');
                 } else {
                     $approved = '';
+                }
+                if (!empty($approved)) {
+                    $approved = '(' . $approved . ')';
                 }
                 $o .= html_writer::div($checkbox . $picture . ' ' . $name . $studicons . ' ' . $grade . ' ' . $approved, $class);
 
