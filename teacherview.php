@@ -459,8 +459,8 @@ $commandbar = new scheduler_command_bar();
 $commandbar->title = get_string('actions', 'scheduler');
 
 $addbuttons = array();
-$addbuttons[] = $commandbar->action_link(new moodle_url($actionurl, array('what' => 'addsession')), 'addsession', 't/add');
-$addbuttons[] = $commandbar->action_link(new moodle_url($actionurl, array('what' => 'addslot')), 'addsingleslot', 't/add');
+$addbuttons[] = $commandbar->action_menu_link(new moodle_url($actionurl, array('what' => 'addsession')), 'addsession', 't/add');
+$addbuttons[] = $commandbar->action_menu_link(new moodle_url($actionurl, array('what' => 'addslot')), 'addsingleslot', 't/add');
 $commandbar->add_group(get_string('addcommands', 'scheduler'), $addbuttons);
 
 // If slots already exist, also show delete buttons.
@@ -468,25 +468,24 @@ if ($slots) {
     $delbuttons = array();
 
     $delselectedurl = new moodle_url($actionurl, array('what' => 'deleteslots'));
-    $PAGE->requires->yui_module('moodle-mod_scheduler-delselected', 'M.mod_scheduler.delselected.init',
-                                array($delselectedurl->out(false)) );
-    $delselected = $commandbar->action_link($delselectedurl, 'deleteselection', 't/delete',
-                                            'confirmdelete-selected', 'delselected');
+    $PAGE->requires->js_call_amd('mod_scheduler/delselected', 'init', [$delselectedurl->out(false)]);
+    $delselected = $commandbar->action_menu_link($delselectedurl, 'deleteselection', 't/delete',
+                                                'confirmdelete-selected', 'delselected');
     $delselected->formid = 'delselected';
     $delbuttons[] = $delselected;
 
     if ($permissions->can_edit_all_slots() && $subpage == 'allappointments') {
-        $delbuttons[] = $commandbar->action_link(
+        $delbuttons[] = $commandbar->action_menu_link(
                         new moodle_url($actionurl, array('what' => 'deleteall')),
                         'deleteallslots', 't/delete', 'confirmdelete-all');
-        $delbuttons[] = $commandbar->action_link(
+        $delbuttons[] = $commandbar->action_menu_link(
                         new moodle_url($actionurl, array('what' => 'deleteallunused')),
                         'deleteallunusedslots', 't/delete', 'confirmdelete-unused');
     }
-    $delbuttons[] = $commandbar->action_link(
+    $delbuttons[] = $commandbar->action_menu_link(
                     new moodle_url($actionurl, array('what' => 'deleteunused')),
                     'deleteunusedslots', 't/delete', 'confirmdelete-myunused');
-    $delbuttons[] = $commandbar->action_link(
+    $delbuttons[] = $commandbar->action_menu_link(
                     new moodle_url($actionurl, array('what' => 'deleteonlymine')),
                     'deletemyslots', 't/delete', 'confirmdelete-mine');
 
