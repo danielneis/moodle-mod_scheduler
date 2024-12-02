@@ -273,6 +273,17 @@ class scheduler_editslot_form extends scheduler_slotform_base {
 
         $repeatarray = array();
         $grouparray = array();
+
+        $bookable = true;
+        if (!empty($this->_customdata['slotid'])) {
+            $slot = slot::load_by_id($this->_customdata['slotid'], $this->scheduler);
+            if (!$slot->is_in_bookable_period() &&
+                !has_capability('mod/scheduler:canappointafterguardtime', $this->scheduler->get_context())) {
+                $bookable = false;
+            }
+        }
+        if ($bookable) {
+
         $repeatarray[] = $mform->createElement('header', 'appointhead', get_string('appointmentno', 'scheduler', '{no}'));
 
         // Choose student.
@@ -333,6 +344,8 @@ class scheduler_editslot_form extends scheduler_slotform_base {
 
         $this->repeat_elements($repeatarray, $repeatno, $repeateloptions,
                         'appointment_repeats', 'appointment_add', 1, get_string('addappointment', 'scheduler'));
+        }
+
 
         $this->add_action_buttons();
 

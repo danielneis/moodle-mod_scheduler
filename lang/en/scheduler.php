@@ -51,6 +51,7 @@ $string['scheduler:seeoverviewoutsideactivity'] = 'Use the overview screen to se
 $string['scheduler:editallattended'] = 'Mark students in all appointments as attended / not attended.';
 $string['scheduler:editallgrades'] = 'Edit grades in all appointments.';
 $string['scheduler:editallnotes'] = 'Edit appointment notes in all appointments.';
+$string['scheduler:canappointafterguardtime'] = 'Appoint users on slots after guard time.';
 
 /* ***** Events ***** */
 $string['event_bookingformviewed'] = 'Scheduler booking form viewed';
