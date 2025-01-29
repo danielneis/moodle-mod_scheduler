@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use \mod_scheduler\model\scheduler;
+use \mod_scheduler\model\slot;
 use \mod_scheduler\permission\scheduler_permissions;
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
@@ -902,7 +903,9 @@ class mod_scheduler_renderer extends plugin_renderer_base {
             }
 
             if ($slot->exclusivity > 1) {
-                $actions .= ' ('.$slot->exclusivity.')';
+                $slotobj = slot::load_by_id($slot->slotid, $slot->students->scheduler);
+                $remaining = $slotobj->count_remaining_appointments();
+                $actions .= get_string('limited', 'scheduler', $remaining.'/'.$slot->exclusivity);
             }
             $rowdata[] = $actions;
 
