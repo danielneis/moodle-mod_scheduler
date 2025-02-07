@@ -904,7 +904,7 @@ class mod_scheduler_renderer extends plugin_renderer_base {
             if ($slot->exclusivity > 1) {
                 $slotobj = slot::load_by_id($slot->slotid, $slot->students->scheduler);
                 $remaining = $slotobj->count_remaining_appointments();
-                $actions .= get_string('limited', 'scheduler', $remaining.'/'.$slot->exclusivity);
+                $actions .= get_string('limited', 'scheduler', $remaining.' de '.$slot->exclusivity);
             }
             $rowdata[] = $actions;
 
